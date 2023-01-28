@@ -5,6 +5,7 @@ import minimist from 'minimist';
 import { join } from 'node:path';
 import { readdirSync, existsSync, readFileSync } from 'node:fs';
 import { spawn } from 'node:child_process';
+import chalk from 'chalk';
 
 (async () => {
 
@@ -51,7 +52,6 @@ import { spawn } from 'node:child_process';
 
       if (!existsSync(join(args.cwd, dir))) continue;
 
-      console.log(dir);
       for (const file of readdirSync(join(args.cwd, dir)).filter(x => !x.startsWith('.'))) {
         if (/\.test\.(mjs|js|ts|cjs)$/.test(file)) {
           choices.push({
@@ -140,7 +140,7 @@ import { spawn } from 'node:child_process';
     ]);
 
     if (match.command === undefined) {
-      console.log('\nExited, no tests will run\n');
+      console.log(chalk.gray('\nExited, no tests will run\n'));
       return;
     }
 
@@ -152,14 +152,14 @@ import { spawn } from 'node:child_process';
       stdio: 'inherit'
     }).on('exit', function (error) {
 
-      if (!error) console.log('Exited Spawned AVA Process');
+      if (!error) console.log(chalk.gray('\nExited, no tests will run\n'));
 
     });
 
   } else {
 
     if (command.command === undefined) {
-      console.log('\nExited, no tests will run\n');
+      console.log(chalk.gray('\nExited, no tests will run\n'));
       return;
     }
 
@@ -170,7 +170,7 @@ import { spawn } from 'node:child_process';
       stdio: 'inherit'
     }).on('exit', function (error) {
 
-      if (!error) console.log('Exited Spawned AVA Process');
+      if (!error) console.log(chalk.gray('Exited Spawned AVA Process'));
 
     });
   }

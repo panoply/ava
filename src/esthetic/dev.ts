@@ -2,8 +2,7 @@
 /* eslint-disable @typescript-eslint/indent */
 
 import type { HighlightOptions } from 'cli-highlight';
-import esthetic from 'esthetic';
-import test from 'ava';
+import test, { ExecutionContext } from 'ava';
 import { readFile } from 'node:fs/promises';
 import { join, relative } from 'path';
 import { colors } from '../shared/colors';
@@ -60,13 +59,13 @@ interface DevCallback {
  *
  * dev(function())
  */
-export const dev = (sample: string | DevCallback, callback: DevCallback) => {
+export function dev (this: ExecutionContext<unknown>, sample: string | DevCallback, callback: DevCallback) {
 
   const file = typeof sample === 'string'
     ? join(process.cwd(), 'tests', sample)
     : join(process.cwd(), 'tests', 'dev.txt');
 
-  return test(chalk.hex('#ff75d1')('ÆSTHETIC DEVELOPMENT'), async t => {
+  return test(chalk.hex('#ff75d1').italic('ÆSTHETIC'), async t => {
 
     const read = await readFile(file);
 
@@ -75,7 +74,6 @@ export const dev = (sample: string | DevCallback, callback: DevCallback) => {
     const filename = relative(process.cwd(), file);
     const source = read.toString();
     const line = chalk.magenta.bold('-'.repeat(50));
-    const { language } = esthetic.rules();
 
     t.log(chalk.blueBright(filename));
 
@@ -101,7 +99,7 @@ export const dev = (sample: string | DevCallback, callback: DevCallback) => {
               t.log(line);
 
               if (returns.colors === true) {
-                t.log(colors(returns.source, { language }));
+                t.log(colors(returns.source));
               } else {
                 t.log(returns.source);
               }
@@ -116,7 +114,7 @@ export const dev = (sample: string | DevCallback, callback: DevCallback) => {
 
           if (returns.logger !== true) {
             if (returns.colors === true) {
-              t.log(colors(returns.source, { language: esthetic.rules().language }));
+              t.log(colors(returns.source));
             } else {
               t.log(returns.source);
             }
@@ -147,7 +145,7 @@ export const dev = (sample: string | DevCallback, callback: DevCallback) => {
               t.log(line);
 
               if (returns.colors === true) {
-                t.log(colors(returns.source, { language }));
+                t.log(colors(returns.source));
               } else {
                 t.log(returns.source);
               }
@@ -159,7 +157,7 @@ export const dev = (sample: string | DevCallback, callback: DevCallback) => {
 
           if (returns.logger !== true) {
             if (returns.colors === true) {
-              t.log(colors(returns.source, { language }));
+              t.log(colors(returns.source));
             } else {
               t.log(returns.source);
             }
