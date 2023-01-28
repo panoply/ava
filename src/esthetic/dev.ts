@@ -65,7 +65,7 @@ export function dev (this: ExecutionContext<unknown>, sample: string | DevCallba
     ? join(process.cwd(), 'tests', sample)
     : join(process.cwd(), 'tests', 'dev.txt');
 
-  return test(chalk.hex('#ff75d1').italic('ÆSTHETIC'), async t => {
+  return test(chalk.hex('#ff75d1').bold('Æsthetic'), async t => {
 
     const read = await readFile(file);
 
