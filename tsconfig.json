@@ -9,9 +9,6 @@
     "src/**/*.ts"
   ],
   "compilerOptions": {
-    "types": [
-      "node"
-    ],
     "target": "ESNext",
     "declaration": true,
     "removeComments": false,
