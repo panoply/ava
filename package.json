@@ -49,6 +49,7 @@
       "./src/parser.ts",
       "./src/esthetic.ts"
     ],
+    "name": "ava",
     "outDir": "package",
     "clean": true,
     "treeshake": true,
@@ -57,7 +58,7 @@
         "./src/parser.ts",
         "./src/esthetic.ts"
       ],
-      "resolve": true
+      "resolve": false
     },
     "external": [
       "chalk",
@@ -65,7 +66,7 @@
       "fs-extra",
       "ava",
       "esthetic",
-      "@liquify/liquid-parser"
+      "@liquify/types"
     ],
     "splitting": false,
     "format": [
@@ -86,23 +87,22 @@
     ]
   },
   "devDependencies": {
-    "@liquify/eslint-config": "workspace:*",
-    "@liquify/liquid-parser": "workspace:*",
-    "@liquify/prettier-config": "workspace:*",
-    "@liquify/tsconfig": "workspace:*",
-    "@types/node": "^18.11.9",
-    "@types/prompts": "^2.4.1",
-    "ava": "^5.0.1",
-    "tsup": "^6.4.0"
+    "@liquify/eslint-config": "workspace:^",
+    "@liquify/prettier-config": "workspace:^",
+    "@liquify/tsconfig": "workspace:^",
+    "@types/node": "^18.15.11",
+    "@types/prompts": "^2.4.4",
+    "ava": "^5.2.0",
+    "tsup": "^6.7.0"
   },
   "peerDependencies": {
     "ava": "^5.0.1"
   },
   "dependencies": {
-    "chalk": "^5.1.2",
+    "@liquify/types": "workspace:^",
+    "chalk": "^5.2.0",
     "cli-highlight": "^2.1.11",
-    "esthetic": "workspace:*",
-    "minimist": "^1.2.7",
+    "minimist": "^1.2.8",
     "prompts": "^2.4.2"
   }
 }
