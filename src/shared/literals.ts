@@ -1,5 +1,7 @@
 /**
  * Dedent Literals
+ *
+ * **NOTE** Ending newlines are stripped from the result.
  */
 function literal (strings: TemplateStringsArray, ...values: Array<string>) {
 
