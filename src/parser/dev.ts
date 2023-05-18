@@ -1,7 +1,7 @@
 /* eslint-disable no-unused-vars */
 
 import type { ExecutionContext } from 'ava';
-import type { IAST } from '@liquify/liquid-parser';
+import type { IAST } from '@liquify/types/parser';
 import { readFile } from 'node:fs/promises';
 import { join, relative } from 'path';
 import chalk from 'chalk';

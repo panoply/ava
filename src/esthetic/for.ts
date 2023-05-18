@@ -2,7 +2,7 @@
 /* eslint-disable @typescript-eslint/indent */
 
 import ava from 'ava';
-import type { Rules } from 'esthetic';
+import type { Rules } from '@liquify/types/esthetic';
 import { readFile } from 'node:fs/promises';
 import { join, dirname } from 'node:path';
 

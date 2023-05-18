@@ -1,7 +1,7 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable @typescript-eslint/indent */
 import type { ExecutionContext } from 'ava';
-import type { IAST, INode } from '@liquify/liquid-parser';
+import type { IAST, INode } from '@liquify/types/parser';
 import chalk from 'chalk';
 
 /* -------------------------------------------- */
