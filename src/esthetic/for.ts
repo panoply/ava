@@ -3,10 +3,8 @@
 
 import ava from 'ava';
 import type { Rules } from '@liquify/types/esthetic';
-import { readFile, writeFile } from 'node:fs/promises';
+import { readFile } from 'node:fs/promises';
 import { join, dirname } from 'node:path';
-import chalk from 'chalk';
-
 type TupleOf<T, N extends number, R extends unknown[] = []> = R['length'] extends N ? R : TupleOf<T, N, [T, ...R]>;
 type Tuple<T, N extends number> = N extends N ? number extends N ? T[] : TupleOf<T, N> : never;
 
@@ -37,17 +35,6 @@ const label = (rules: any) => {
    ].join('\n');
 
 };
-
-ava.after('complete', async () => {
-
-  const read = await readFile(join(process.cwd(), 'node_modules', '.cache', 'cases.txt'));
-  const count = +read.toString() + track;
-
-  await writeFile(join(process.cwd(), 'node_modules', '.cache', 'cases.txt'), `${count}`);
-
-  console.log(chalk.gray(`    ${track} code samples asserted ~ ${count} total test cases performed`));
-
-});
 
 /**
  * For Sample (Æsthetic)

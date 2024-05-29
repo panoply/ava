@@ -1,6 +1,6 @@
 {
   "name": "@liquify/ava",
-  "version": "0.0.7",
+  "version": "0.0.8",
   "description": "AVA Test runner extension pack for projects contained in the Liquify monorepo workspace.",
   "author": {
     "name": "Νίκος Σαβίδης",
