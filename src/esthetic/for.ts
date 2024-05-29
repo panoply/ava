@@ -3,8 +3,14 @@
 
 import ava from 'ava';
 import type { Rules } from '@liquify/types/esthetic';
-import { readFile } from 'node:fs/promises';
+import { readFile, writeFile } from 'node:fs/promises';
 import { join, dirname } from 'node:path';
+import chalk from 'chalk';
+
+type TupleOf<T, N extends number, R extends unknown[] = []> = R['length'] extends N ? R : TupleOf<T, N, [T, ...R]>;
+type Tuple<T, N extends number> = N extends N ? number extends N ? T[] : TupleOf<T, N> : never;
+
+let track = 0;
 
 /* -------------------------------------------- */
 /* PRIVATES                                     */
@@ -31,6 +37,17 @@ const label = (rules: any) => {
    ].join('\n');
 
 };
+
+ava.after('complete', async () => {
+
+  const read = await readFile(join(process.cwd(), 'node_modules', '.cache', 'cases.txt'));
+  const count = +read.toString() + track;
+
+  await writeFile(join(process.cwd(), 'node_modules', '.cache', 'cases.txt'), `${count}`);
+
+  console.log(chalk.gray(`    ${track} code samples asserted ~ ${count} total test cases performed`));
+
+});
 
 /**
  * For Sample (Æsthetic)
@@ -103,6 +120,8 @@ const forSample = (samples: string[]) => (rules: Rules) => async (
 
   const size = samples.length;
 
+  track += size;
+
   for (let index = 0; index < size; index++) {
 
     const sample = samples[index];
@@ -136,13 +155,13 @@ const forSample = (samples: string[]) => (rules: Rules) => async (
  *    markup: {
  *      forceAttribute: true
  *    }
- *   })(async function(source, rules, label) {
+ *   })(function(source, rules, label) {
  *
  *     t.log(this.size) // number of samples
  *     t.log(this.index) // index reference of sample running
  *     t.log(this.last) // whether or not this is the last sample
  *
- *     const output = await esthetic.format(source, rules)
+ *     const output = esthetic.format(source, rules)
  *
  *     if (this.last) t.log('last sample') // example of using the last value
  *
@@ -227,7 +246,7 @@ export { forSample };
  *
  * test('Example Test', async t => {
  *
- *   forSample(
+ *   forAssert(
  *    [
  *      [
  *        liquid`{{actual}}`,
@@ -244,13 +263,13 @@ export { forSample };
  *        `
  *      ]
  *    ]
- *   )(async function(input, expect) {
+ *   )(function(input, expect) {
  *
  *     t.log(this.size) // number of samples
  *     t.log(this.index) // index reference of sample running
  *     t.log(this.last) // whether or not this is the last sample
  *
- *     const actual = esthetic.format.sync(input, {
+ *     const actual = esthetic.format(input, {
  *       language: 'liquid',
  *       liquid: {
  *         normalizeSpacing: true
@@ -288,12 +307,18 @@ export { forSample };
 
   const size = samples.length;
 
+  track += size;
+
   for (let index = 0; index < size; index++) {
 
     const sample = samples[index];
     const last = index === size - 1;
 
-    callback.bind({ last, index, size })(sample[0], sample[1]);
+    callback.bind({
+      last,
+      index,
+      size
+    })(sample[0], sample[1]);
 
   }
 
@@ -302,9 +327,10 @@ export { forSample };
 /**
  * For Rule (Æsthetic)
  *
- * Accepts a string sample value and an various rules to apply on each provided
- * sample. The execution order is **sample** > **rule** so for each sample all
- * rules provided will be return in the callback cycle.
+ * Accepts an array list of string sample values along with various rules to
+ * apply on each provided sample. The execution order is **sample** > **rule**
+ * so for each sample all rules provided will be return in the callback cycle.
+ *
  *
  * @example
  *
@@ -314,18 +340,14 @@ export { forSample };
  *
  * test('Example Test', async t => {
  *
- *  forRules([
- *      html`
+ *  // Option 1 - Passing string list of samples
+ *  const samples =[
+ *    html`<div id="xxx"></div>`,
+ *    html`<div id="xxx" class="test" data-attr="foo"></div>`
+ *  ];
  *
- *        <div id="xxx"></div>
- *
- *      `,
- *      html`
- *
- *        <div id="xxx" class="test" data-attr="foo"></div>
- *
- *      `
- *   ])([
+ *  // Provide either sample or asserts
+ *  forRule(samples)([
  *     {
  *       language: 'html',
  *       markup: {
@@ -344,13 +366,13 @@ export { forSample };
  *        forceAttribute: false
  *       }
  *     },
- *  ])(async function(sample, rules, label) {
+ *  ])(function(sample, rules, label) {
  *
  *     t.log(this.size) // number of samples
  *     t.log(this.indexSample) // the index reference of sample running
  *     t.log(this.indexRule) // the index reference of ruleset
  *
- *     const output = await esthetic.format(sample, rules)
+ *     const output = esthetic.format(sample, rules)
  *
  *     if (this.isRule) t.log('running a rule') // prints when executing a rule
  *
@@ -361,7 +383,13 @@ export { forSample };
  * })
  *
  */
-const forRule = (samples: string[]) => (rules: Rules[]) => (
+const forRule = <
+  R extends Rules[]
+>(
+  samples: Tuple<string, R['length']>
+) => (
+  rules: R
+) => (
   callback: (
     this: {
       /**
@@ -369,65 +397,75 @@ const forRule = (samples: string[]) => (rules: Rules[]) => (
        */
       size: {
         /**
-         * The amount of samples provided
+         * The total amount of samples provided
          */
         samples: number;
+        /**
+         * The total amount of sample asserts provided
+         */
+        asserts: number;
         /**
          * The amount of rules provided
          */
         rules: number;
       }
       /**
-        * The index references in iteration
-        */
+       * The index references in iteration
+       */
       index: {
         /**
          * The current sample index
          */
         sample: number;
         /**
+         * The current assert index for the sample
+         */
+        assert: number;
+        /**
          * The current rule index
          */
         rule: number;
       }
     },
-    sample: string,
+    source: string,
     rule?: Rules | string,
     label?: string
   ) => void
 ) => {
 
   if (!Array.isArray(rules)) {
-
     throw new Error(
       [
         'When using the "forRule" runner, you must provide an array list of rules.',
         'Otherwise use the "forSample" or "forAssert" runners.'
       ].join('\n')
     );
-
   }
 
-  const size = {
+  const size: any = {
     samples: samples.length,
     rules: rules.length
   };
+
+  track += size.samples;
+  track += size.rules;
 
   for (let index = 0; index < size.samples; index++) {
 
     const sample = samples[index];
 
-      for (let rule = 0; rule < size.rules; rule++) {
+    for (let rule = 0; rule < size.rules; rule++) {
 
-        callback.bind({
-          size,
-          index: {
-            sample: index,
-            rule
-          }
-        })(sample, rules[rule], label(rules[rule]));
+      const binding = {
+        size,
+        index: {
+          sample: index,
+          rule
+        }
+      };
 
-      }
+      callback.bind(binding)(sample, rules[rule], label(rules[rule]));
+    }
 
   }
 };
