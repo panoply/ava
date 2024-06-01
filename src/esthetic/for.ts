@@ -8,8 +8,6 @@ import { join, dirname } from 'node:path';
 type TupleOf<T, N extends number, R extends unknown[] = []> = R['length'] extends N ? R : TupleOf<T, N, [T, ...R]>;
 type Tuple<T, N extends number> = N extends N ? number extends N ? T[] : TupleOf<T, N> : never;
 
-let track = 0;
-
 /* -------------------------------------------- */
 /* PRIVATES                                     */
 /* -------------------------------------------- */
@@ -106,8 +104,6 @@ const forSample = (samples: string[]) => (rules: Rules) => async (
 ) => {
 
   const size = samples.length;
-
-  track += size;
 
   for (let index = 0; index < size; index++) {
 
@@ -294,8 +290,6 @@ export { forSample };
 
   const size = samples.length;
 
-  track += size;
-
   for (let index = 0; index < size; index++) {
 
     const sample = samples[index];
@@ -433,9 +427,6 @@ const forRule = <
     samples: samples.length,
     rules: rules.length
   };
-
-  track += size.samples;
-  track += size.rules;
 
   for (let index = 0; index < size.samples; index++) {
 

@@ -1,6 +1,6 @@
 {
   "name": "@liquify/ava",
-  "version": "0.0.8",
+  "version": "0.0.9",
   "description": "AVA Test runner extension pack for projects contained in the Liquify monorepo workspace.",
   "author": {
     "name": "Νίκος Σαβίδης",
@@ -8,8 +8,7 @@
   },
   "license": "MIT",
   "bin": {
-    "tests": "./package/cli.js",
-    "tapp": "./package/tap.js"
+    "tests": "./package/cli.js"
   },
   "type": "module",
   "main": "./package/*",
@@ -48,8 +47,7 @@
     "entry": [
       "./src/cli.ts",
       "./src/parser.ts",
-      "./src/esthetic.ts",
-      "./src/tap.ts"
+      "./src/esthetic.ts"
     ],
     "name": "ava",
     "outDir": "package",
