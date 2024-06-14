@@ -5,6 +5,7 @@ import ava from 'ava';
 import type { Rules } from '@liquify/types/esthetic';
 import { readFile } from 'node:fs/promises';
 import { join, dirname } from 'node:path';
+
 type TupleOf<T, N extends number, R extends unknown[] = []> = R['length'] extends N ? R : TupleOf<T, N, [T, ...R]>;
 type Tuple<T, N extends number> = N extends N ? number extends N ? T[] : TupleOf<T, N> : never;
 

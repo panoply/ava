@@ -252,6 +252,7 @@ dev(async function(source) => {
   });
 
   return {
+    wrap: 0,
     inspect: true,
     repeat: 4,
     colors: false,
@@ -270,6 +271,7 @@ This `dev` test export requires an object be returned and accepts the following 
 
 | Property  | Description                                                                               |
 | --------- | ----------------------------------------------------------------------------------------- |
+| `wrap`    | Prints wrap line reference when logging output                                            |
 | `inspect` | Whether or not to log the `output` result after formatting completes                      |
 | `repeat`  | Repeats the test using the `output` as source. Used to simulate an onSave in text editors |
 | `source`  | Reference to the provided `output` returned by Æsthetic after beautification              |

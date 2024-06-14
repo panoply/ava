@@ -12,6 +12,8 @@
     "target": "ESNext",
     "declaration": true,
     "removeComments": false,
+    "module": "NodeNext",
+    "moduleResolution": "nodenext",
     "incremental": false,
     "typeRoots": [
       "node_modules/@types",

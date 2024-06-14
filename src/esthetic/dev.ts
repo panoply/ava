@@ -5,7 +5,7 @@ import type { HighlightOptions } from 'cli-highlight';
 import test, { ExecutionContext } from 'ava';
 import { readFile } from 'node:fs/promises';
 import { join, relative } from 'path';
-import { colors } from '../shared/colors';
+import { colors } from '../shared/colors.js';
 import chalk from 'chalk';
 
 interface DevCallback {
@@ -13,6 +13,11 @@ interface DevCallback {
     source: string,
     highlight: (source: string, options?: HighlightOptions) => string
   ): void | Promise<{
+    /**
+     * Define a wrap limit, this should match the `wrap` limit.
+     * When provided, a line is logged before output for reference.
+     */
+    wrap?: number;
     /**
      * Repeat the test function to simulate a persisted environment
      * like that found in text-editors when formatting onSave.
@@ -85,6 +90,10 @@ export function dev (this: ExecutionContext<unknown>, sample: string | DevCallba
 
       if (typeof returns === 'object') {
 
+        const wrap = returns.wrap > 0
+        ? chalk.hex('#D47179')(`${'-'.repeat(returns.wrap)} ‣ ${chalk.bold(`${returns.wrap}`)}`)
+        : null;
+
         if (isNaN(repeats)) {
 
           repeats = returns.repeat || 0;
@@ -112,6 +121,8 @@ export function dev (this: ExecutionContext<unknown>, sample: string | DevCallba
 
           }
 
+          if (wrap !== null) t.log(wrap);
+
           if (returns.logger !== true) {
             if (returns.colors === true) {
               t.log(colors(returns.source));
@@ -132,6 +143,10 @@ export function dev (this: ExecutionContext<unknown>, sample: string | DevCallba
       const returns = await sample(source, colors);
 
       if (typeof returns === 'object') {
+
+        const wrap = returns.wrap > 0
+          ? chalk.hex('#D47179')(`${'-'.repeat(returns.wrap)} ‣ ${chalk.bold(`${returns.wrap}`)}`)
+          : null;
 
         if (isNaN(repeats)) {
 
@@ -154,6 +169,8 @@ export function dev (this: ExecutionContext<unknown>, sample: string | DevCallba
             }
             repeats--;
           }
+
+          if (wrap !== null) t.log(wrap);
 
           if (returns.logger !== true) {
             if (returns.colors === true) {
