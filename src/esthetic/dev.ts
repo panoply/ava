@@ -1,12 +1,12 @@
-/* eslint-disable no-unused-vars */
-/* eslint-disable @typescript-eslint/indent */
-
 import type { HighlightOptions } from 'cli-highlight';
-import test, { ExecutionContext } from 'ava';
+
 import { readFile } from 'node:fs/promises';
 import { join, relative } from 'path';
-import { colors } from '../shared/colors.js';
+
+import test, { ExecutionContext } from 'ava';
 import chalk from 'chalk';
+
+import { colors } from '../shared/colors.js';
 
 interface DevCallback {
   (
@@ -86,13 +86,13 @@ export function dev (this: ExecutionContext<unknown>, sample: string | DevCallba
 
     if (typeof callback === 'function') {
 
-    const returns = await callback(source, colors);
+      const returns = await callback(source, colors);
 
       if (typeof returns === 'object') {
 
         const wrap = returns.wrap > 0
-        ? chalk.hex('#D47179')(`${'-'.repeat(returns.wrap)} ‣ ${chalk.bold(`${returns.wrap}`)}`)
-        : null;
+          ? chalk.hex('#D47179')(`${'-'.repeat(returns.wrap)} ‣ ${chalk.bold(`${returns.wrap}`)}`)
+          : null;
 
         if (isNaN(repeats)) {
 

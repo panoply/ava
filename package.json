@@ -75,17 +75,6 @@
     ]
   },
   "prettier": "@liquify/prettier-config",
-  "eslintConfig": {
-    "ignorePatterns": [
-      "package/*",
-      "index.cjs",
-      "index.js",
-      "index.d.ts"
-    ],
-    "extends": [
-      "@liquify/eslint-config"
-    ]
-  },
   "devDependencies": {
     "@liquify/eslint-config": "workspace:^",
     "@liquify/prettier-config": "workspace:^",

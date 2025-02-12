@@ -1,5 +1,5 @@
-import { highlight, HighlightOptions, plain } from 'cli-highlight';
 import chalk from 'chalk';
+import { highlight, HighlightOptions, plain } from 'cli-highlight';
 
 /**
  * The default theme. It is possible to override just individual keys.

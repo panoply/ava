@@ -1,13 +1,14 @@
-/* eslint-disable no-unused-vars */
-/* eslint-disable @typescript-eslint/indent */
+import type { Rules } from '@liquify/types/esthetic';
+
+import { readFile } from 'node:fs/promises';
+import { dirname, join } from 'node:path';
 
 import ava from 'ava';
-import type { Rules } from '@liquify/types/esthetic';
-import { readFile } from 'node:fs/promises';
-import { join, dirname } from 'node:path';
 
 type TupleOf<T, N extends number, R extends unknown[] = []> = R['length'] extends N ? R : TupleOf<T, N, [T, ...R]>;
 type Tuple<T, N extends number> = N extends N ? number extends N ? T[] : TupleOf<T, N> : never;
+
+globalThis.count = 0;
 
 /* -------------------------------------------- */
 /* PRIVATES                                     */
@@ -15,23 +16,23 @@ type Tuple<T, N extends number> = N extends N ? number extends N ? T[] : TupleOf
 
 const description = (content: string, options: any) => {
 
-    return [
-      content,
-      '```js',
-      JSON.stringify(options, null, 2),
-      '```'
-    ].join('\n');
+  return [
+    content,
+    '```js',
+    JSON.stringify(options, null, 2),
+    '```'
+  ].join('\n');
 
 };
 
 const label = (rules: any) => {
 
   return [
-      '<h3>Rules</h3>\n',
-      '```js',
-      JSON.stringify(rules, null, 2),
-      '```'
-   ].join('\n');
+    '<h3>Rules</h3>\n',
+    '```js',
+    JSON.stringify(rules, null, 2),
+    '```'
+  ].join('\n');
 
 };
 
@@ -111,9 +112,12 @@ const forSample = (samples: string[]) => (rules: Rules) => async (
     const sample = samples[index];
     const last = index === size - 1;
 
+    globalThis.count++;
+
     callback.bind({ index, size, last })(sample, rules, label(rules));
 
   }
+
 };
 
 /**
@@ -213,6 +217,7 @@ forSample.files = (samples: string[]) => (rules: Rules) => async (
     callback.bind({ index, size, last })(sample, rules, description(describe, rules));
 
   }
+
 };
 
 export { forSample };
@@ -268,7 +273,7 @@ export { forSample };
  *
  * })
  */
- export const forAssert = (samples: string[][]) => (
+export const forAssert = (samples: string[][]) => (
   callback: (
     this: {
       /**
@@ -295,6 +300,8 @@ export { forSample };
 
     const sample = samples[index];
     const last = index === size - 1;
+
+    globalThis.count++;
 
     callback.bind({
       last,
@@ -368,11 +375,11 @@ export { forSample };
 const forRule = <
   R extends Rules[]
 >(
-  samples: Tuple<string, R['length']>
-) => (
-  rules: R
-) => (
-  callback: (
+    samples: Tuple<string, R['length']>
+  ) => (
+    rules: R
+  ) => (
+    callback: (
     this: {
       /**
        * The number of samples and rules
@@ -413,41 +420,44 @@ const forRule = <
     rule?: Rules | string,
     label?: string
   ) => void
-) => {
+  ) => {
 
-  if (!Array.isArray(rules)) {
-    throw new Error(
-      [
-        'When using the "forRule" runner, you must provide an array list of rules.',
-        'Otherwise use the "forSample" or "forAssert" runners.'
-      ].join('\n')
-    );
-  }
-
-  const size: any = {
-    samples: samples.length,
-    rules: rules.length
-  };
-
-  for (let index = 0; index < size.samples; index++) {
-
-    const sample = samples[index];
-
-    for (let rule = 0; rule < size.rules; rule++) {
-
-      const binding = {
-        size,
-        index: {
-          sample: index,
-          rule
-        }
-      };
-
-      callback.bind(binding)(sample, rules[rule], label(rules[rule]));
+    if (!Array.isArray(rules)) {
+      throw new Error(
+        [
+          'When using the "forRule" runner, you must provide an array list of rules.',
+          'Otherwise use the "forSample" or "forAssert" runners.'
+        ].join('\n')
+      );
     }
 
-  }
-};
+    const size: any = {
+      samples: samples.length,
+      rules: rules.length
+    };
+
+    for (let index = 0; index < size.samples; index++) {
+
+      const sample = samples[index];
+
+      for (let rule = 0; rule < size.rules; rule++) {
+
+        globalThis.count++;
+
+        const binding = {
+          size,
+          index: {
+            sample: index,
+            rule
+          }
+        };
+
+        callback.bind(binding)(sample, rules[rule], label(rules[rule]));
+      }
+
+    }
+
+  };
 
 /**
  * For Rule Files (Æsthetic)
@@ -587,19 +597,22 @@ forRule.files = (samples: string[]) => (rules: Rules[]) => async (
     const describe = `### Snapshot ${index + 1}\n` + source.slice(3, separate).trim();
     const sample = source.slice(separate + 3).trimStart();
 
-      for (let rule = 0; rule < size.rules; rule++) {
+    for (let rule = 0; rule < size.rules; rule++) {
 
-        callback.bind({
-          size,
-          index: {
-            sample: index,
-            rule
-          }
-        })(sample, rules[rule], description(describe, rules[rule]));
+      globalThis.count++;
 
-      }
+      callback.bind({
+        size,
+        index: {
+          sample: index,
+          rule
+        }
+      })(sample, rules[rule], description(describe, rules[rule]));
+
+    }
 
   }
+
 };
 
 export { forRule };

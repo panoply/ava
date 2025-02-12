@@ -1,7 +1,6 @@
-/* eslint-disable no-unused-vars */
-/* eslint-disable @typescript-eslint/indent */
-import type { ExecutionContext } from 'ava';
 import type { IAST, INode } from '@liquify/types/parser';
+import type { ExecutionContext } from 'ava';
+
 import chalk from 'chalk';
 
 /* -------------------------------------------- */
@@ -53,7 +52,7 @@ export const explore = {
           }
 
           if (props.includes('filters')) {
-             console.log(chalk.cyan.dim(node.tag) + chalk.gray(' (filters)'));
+            console.log(chalk.cyan.dim(node.tag) + chalk.gray(' (filters)'));
             console.log(child.filters, '\n');
           }
 

@@ -1,5 +1,5 @@
-import { readdirSync, copyFileSync, rmSync } from 'node:fs';
-import { join, dirname, basename } from 'node:path';
+import { copyFileSync, readdirSync, rmSync } from 'node:fs';
+import { basename, dirname, join } from 'node:path';
 
 type TO = (
   | `e2e/${string}`
@@ -80,4 +80,4 @@ async function clear (path: TO) {
 
 }
 
-export { get, clear };
+export { clear, get };

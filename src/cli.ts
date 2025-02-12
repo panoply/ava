@@ -1,12 +1,13 @@
 #!/usr/bin/env node
 
-import prompts from 'prompts';
-import minimist from 'minimist';
+import { spawn } from 'node:child_process';
+import { copyFileSync, existsSync, mkdirSync, readdirSync, readFileSync, rmSync } from 'node:fs';
 import { basename, join } from 'node:path';
 // import { copy } from 'fs-extra/esm';
-import { readdirSync, existsSync, readFileSync, rmSync, copyFileSync, mkdirSync } from 'node:fs';
-import { spawn } from 'node:child_process';
+
 import chalk from 'chalk';
+import minimist from 'minimist';
+import prompts from 'prompts';
 
 // tests -s
 // tests --clean-samples
@@ -23,6 +24,7 @@ import chalk from 'chalk';
     default: {
       cwd: join(process.cwd(), 'tests'),
       e2e: false,
+      samples: null,
       clean: null // clean samples
     },
     boolean: [
@@ -125,7 +127,7 @@ import chalk from 'chalk';
 
       if (dirs.length === 0) {
 
-        console.log(chalk.yellowBright.bold('Directory Required, provide 1 or the following:'));
+        console.log(chalk.yellowBright.bold('Directory Required, provide 1 of the following:'));
         const available: string[] = [];
 
         for (const dir of readdirSync(samplesPath).filter(x => !x.startsWith('.'))) {
